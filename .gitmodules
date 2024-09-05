@@ -2,3 +2,6 @@
 	path = f1tenth_gym
 	url = https://github.com/zzangupenn/f1tenth_gym.git
 	branch = lmpc_model
+[submodule "maps/f1tenth_racetracks"]
+	path = maps/f1tenth_racetracks
+	url = https://github.com/zzangupenn/f1tenth_racetracks.git
