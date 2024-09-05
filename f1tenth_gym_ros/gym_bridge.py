@@ -39,6 +39,46 @@ import numpy as np
 from transforms3d import euler
 
 from .Track import Track
+import yaml
+from pathlib import Path
+
+class ConfigYAML():
+    """
+    Config class for yaml file
+    Able to load and save yaml file to and from python object
+    """
+    def __init__(self) -> None:
+        self.kmonitor_enable = 0
+        pass
+    
+    def load_file(self, filename):
+        d = yaml.safe_load(Path(filename).read_text())
+        for key in d: 
+            setattr(self, key, d[key]) 
+    
+    def save_file(self, filename):
+        d = vars(self)
+        class_d = vars(self.__class__)
+        d_out = {}
+        for key in list(class_d.keys()):
+            if not key.startswith('__'):
+                if isinstance(class_d[key], np.ndarray):
+                    d_out[key] = class_d[key].tolist()
+                else:
+                    d_out[key] = class_d[key]
+        for key in list(d.keys()):
+            if not key.startswith('__'):
+                if isinstance(d[key], np.ndarray):
+                    d_out[key] = d[key].tolist()
+                else:
+                    d_out[key] = d[key]
+        with open(filename, 'w+') as ff:
+            yaml.dump_all([d_out], ff)
+            
+            
+class Config(ConfigYAML):
+    pre_load_data = False
+    save_data = True
 
 class GymBridge(Node):
     def __init__(self):
@@ -86,6 +126,7 @@ class GymBridge(Node):
         
 
         map_info = np.genfromtxt(self.get_parameter('map_dir').value + 'map_info.txt', delimiter='|', dtype='str')
+        config = Config()
         track, config = Track.load_map(self.get_parameter('map_dir').value, map_info, self.get_parameter('map_ind').value, config, scale=self.get_parameter('map_scale').value, downsample_step=1)
         waypoints = track.waypoints
 
