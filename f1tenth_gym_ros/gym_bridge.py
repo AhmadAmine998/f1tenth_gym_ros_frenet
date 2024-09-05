@@ -172,8 +172,14 @@ class GymBridge(Node):
             self.opp_steer = 0.0
             self.opp_collision = False
             self.obs, _ , self.done, _ = self.env.reset(np.array([[sx, sy, stheta], [sx1, sy1, stheta1]]))
-            self.ego_scan = list(self.obs['scans'][0])
-            self.opp_scan = list(self.obs['scans'][1])
+            # Check if obs['scans'] is [] and if so fill with lidar max range
+
+            if self.obs['scans'] == []:
+                self.ego_scan = [30.0 for _ in range(scan_beams)]
+                self.opp_scan = [30.0 for _ in range(scan_beams)]
+            else:
+                self.ego_scan = list(self.obs['scans'][0])
+                self.opp_scan = list(self.obs['scans'][1])
 
             opp_scan_topic = self.get_parameter('opp_scan_topic').value
             opp_odom_topic = self.opp_namespace + '/' + self.get_parameter('opp_odom_topic').value
@@ -184,7 +190,12 @@ class GymBridge(Node):
         else:
             self.has_opp = False
             self.obs, _ , self.done, _ = self.env.reset(np.array([[sx, sy, stheta]]))
-            self.ego_scan = list(self.obs['scans'][0])
+            # Check if obs['scans'] is [] and if so fill with lidar max range
+            if self.obs['scans'] == []:
+                self.ego_scan = [30.0 for _ in range(scan_beams)]
+            else:
+                self.ego_scan = list(self.obs['scans'][0])
+    
 
         # sim physical step timer
         self.drive_timer = self.create_timer(0.01, self.drive_timer_callback)
@@ -324,9 +335,15 @@ class GymBridge(Node):
         self._publish_wheel_transforms(ts)
 
     def _update_sim_state(self):
-        self.ego_scan = list(self.obs['scans'][0])
+        if self.obs['scans'] == []:
+            self.ego_scan = [30.0 for _ in range(self.get_parameter('scan_beams').value)]
+        else:
+            self.ego_scan = list(self.obs['scans'][0])
         if self.has_opp:
-            self.opp_scan = list(self.obs['scans'][1])
+            if self.obs['scans'] == []:
+                self.opp_scan = [30.0 for _ in range(self.get_parameter('scan_beams').value)]
+            else:
+                self.opp_scan = list(self.obs['scans'][1])
             self.opp_pose[0] = self.obs['poses_x'][1]
             self.opp_pose[1] = self.obs['poses_y'][1]
             self.opp_pose[2] = self.obs['poses_theta'][1]

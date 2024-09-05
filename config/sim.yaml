@@ -42,7 +42,7 @@ bridge:
     scan_beams: 1080
 
     # map parameters
-    map_path: '/sim_ws/src/f1tenth_gym_ros/maps/Spielberg_Blank_map'
+    map_path: '/home/ahmad/lmppi_ros_ws/src/f1tenth_gym_ros_frenet/maps/Spielberg_Blank_map'
     map_img_ext: '.png'
 
     # opponent parameters
@@ -61,7 +61,7 @@ bridge:
     # teleop
     kb_teleop: True
 
-    map_dir: '/sim_ws/src/f1tenth_gym_ros/maps/f1tenth_racetracks/'
+    map_dir: '/home/ahmad/lmppi_ros_ws/src/f1tenth_gym_ros_frenet/maps/f1tenth_racetracks/'
     map_ind: 58
     map_scale: 1.0
     gym_model: 'dynamic_ST' # ks_frenet, dynamic_ST
