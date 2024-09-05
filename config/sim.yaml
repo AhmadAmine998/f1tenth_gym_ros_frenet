@@ -42,7 +42,7 @@ bridge:
     scan_beams: 1080
 
     # map parameters
-    map_path: '/sim_ws/src/f1tenth_gym_ros/maps/levine'
+    map_path: '/sim_ws/src/f1tenth_gym_ros/maps/Spielberg_Blank_map'
     map_img_ext: '.png'
 
     # opponent parameters
@@ -60,3 +60,11 @@ bridge:
 
     # teleop
     kb_teleop: True
+
+    map_dir: '/sim_ws/src/f1tenth_gym_ros/maps/f1tenth_racetracks/'
+    map_ind: 58
+    map_scale: 1.0
+    gym_model: 'dynamic_ST' # ks_frenet, dynamic_ST
+    sim_time_step: 0.1
+    drive_control_mode: 'acc' # acc, vel
+    steering_control_mode: 'vel' # vel, angle

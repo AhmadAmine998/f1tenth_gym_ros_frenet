@@ -38,6 +38,8 @@ import gym
 import numpy as np
 from transforms3d import euler
 
+from utils.Track import Track
+
 class GymBridge(Node):
     def __init__(self):
         super().__init__('gym_bridge')
@@ -66,18 +68,37 @@ class GymBridge(Node):
         self.declare_parameter('stheta1')
         self.declare_parameter('kb_teleop')
 
+        # LMPC specific params added in sim.yaml
+        self.declare_parameter('map_dir')
+        self.declare_parameter('map_ind')
+        self.declare_parameter('gym_model')
+        self.declare_parameter('sim_time_step')
+        self.declare_parameter('drive_control_mode')
+        self.declare_parameter('steering_control_mode')
+        self.declare_parameter('map_scale')
+
         # check num_agents
         num_agents = self.get_parameter('num_agent').value
         if num_agents < 1 or num_agents > 2:
             raise ValueError('num_agents should be either 1 or 2.')
         elif type(num_agents) != int:
             raise ValueError('num_agents should be an int.')
+        
+
+        map_info = np.genfromtxt(self.get_parameter('map_dir').value + 'map_info.txt', delimiter='|', dtype='str')
+        track, config = Track.load_map(self.get_parameter('map_dir').value, map_info, self.get_parameter('map_ind').value, config, scale=self.get_parameter('map_scale').value, downsample_step=1)
+        waypoints = track.waypoints
 
         # env backend
         self.env = gym.make('f110_gym:f110-v0',
                             map=self.get_parameter('map_path').value,
                             map_ext=self.get_parameter('map_img_ext').value,
-                            num_agents=num_agents)
+                            num_agents=num_agents,
+                            timestep=self.get_parameter('sim_time_step').value,
+                            model=self.get_parameter('gym_model').value,
+                            drive_control_mode=self.get_parameter('drive_control_mode').value,
+                            steering_control_mode=self.get_parameter('steering_control_mode').value,
+                            waypoints=waypoints)
 
         sx = self.get_parameter('sx').value
         sy = self.get_parameter('sy').value
