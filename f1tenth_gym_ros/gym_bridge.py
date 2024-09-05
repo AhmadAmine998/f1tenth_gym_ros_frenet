@@ -38,7 +38,7 @@ import gym
 import numpy as np
 from transforms3d import euler
 
-from utils.Track import Track
+from .Track import Track
 
 class GymBridge(Node):
     def __init__(self):
