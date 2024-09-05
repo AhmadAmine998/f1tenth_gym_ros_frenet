@@ -1,0 +1,4 @@
+[submodule "f1tenth_gym"]
+	path = f1tenth_gym
+	url = https://github.com/zzangupenn/f1tenth_gym.git
+	branch = lmpc_model
